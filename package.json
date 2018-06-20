@@ -4,7 +4,8 @@
   "description": "API for consuming bear sighting information",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node server/server.js --presets es2015"
   },
   "author": "Eleanor Demis",
   "license": "ISC",
