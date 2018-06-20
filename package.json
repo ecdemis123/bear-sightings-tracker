@@ -1,0 +1,11 @@
+{
+  "name": "bear_sightings_tracker",
+  "version": "1.0.0",
+  "description": "API for consuming bear sighting information",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eleanor Demis",
+  "license": "ISC"
+}
