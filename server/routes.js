@@ -3,20 +3,10 @@ import controller from './controller';
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.json('Hello');
-});
+router.post('/sighting', controller.createSighting);
 
-router.post('/sighting', (req, res) => {
+router.get('/sighting/search', controller.searchSighting);
 
-});
-
-router.get('/sighting/search', (req, res) => {
-
-});
-
-router.get('/sighting/:id', (req, res) =>{
-
-});
+router.get('/sighting/:id', controller.getSighting);
 
 export default router;
