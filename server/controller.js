@@ -2,6 +2,7 @@ import Sequelize from 'sequelize'
 import Sighting from './db/models/Sighting';
 import Location from './db/models/Location';
 import Species from './db/models/Species';
+import db from './db/db';
 
 const Op = Sequelize.Op;
 
@@ -66,17 +67,37 @@ module.exports = {
   },
   createSighting: (req, res) => {
     let body = req.body
-    Location.findOrCreate({where:{zipCode: body.zipCode}})
-    .spread((location, created) => {
-      Species.findOrCreate({where:{name: body.species}})
-      .spread((species, created) => {
-        let sighting = Sighting.create({notes: body.notes,numBears: body.numBears,locationId: location.get('id'),speciesId: species.get('id')})
-        if (!sighting) {
-          return res.status(500).json({ errors: [{ message: 'Error creating Sighting.' }] })
-        } else {
-          return res.status(201).json({message: 'Sighting successfully created.'})
-        }
-      })
+
+    // db.transaction(async t => {
+    //   // return Location.findOrCreate({where:{zipCode: body.zipCode}, transaction: t})
+    //   let [location, _] = await Location.findOrCreate({where:{zipCode: body.zipCode}, transaction: t});
+    //   let [species, __] = await Species.findOrCreate({where:{name: body.species}, transaction: t});
+    //   let sighting = await Sighting.create({notes: body.notes,numBears: body.numBears,locationId: location.get('id'),speciesId: species.get('id'), transaction: t})
+    //   return sighting
+    // }).then(result => {
+    //   return res.json(result)
+    // }).catch(error => {
+    //   return error;
+    // })
+
+    db.transaction(async t => {
+      let [location, _] = await Location.findOrCreate({where:{zipCode: body.zipCode}, transaction: t});
+      let [species, __] = await Species.findOrCreate({where:{name: body.species}, transaction: t});
+      let sighting = await Sighting.create({notes: body.notes,numBears: body.numBears,locationId: location.get('id'),speciesId: species.get('id'), transaction: t})
+      return sighting;
+    }).then(result => {
+      return res.status(201).json({message: 'Sighting created'});
+    }).catch(err => {
+      return res.status(500).json({ errors: [{ message: 'Error creating Sighting.' }] })
     })
+    // Species.findOrCreate({where:{name: body.species}})
+    // .spread((species, created) => {
+    //   let sighting = Sighting.create({notes: body.notes,numBears: body.numBears,locationId: location.get('id'),speciesId: species.get('id')})
+    //   if (!sighting) {
+    //     return res.status(500).json({ errors: [{ message: 'Error creating Sighting.' }] })
+    //   } else {
+    //     return res.status(201).json({message: 'Sighting successfully created.'})
+    //   }
+    // })
   }
 }
